@@ -11,7 +11,7 @@ import unittest
 
 from lxml import etree
 
-from .. import testing
+from . import testing
 
 
 class Cnxml2HtmlTests(unittest.TestCase):
@@ -20,7 +20,7 @@ class Cnxml2HtmlTests(unittest.TestCase):
 
     @property
     def target(self):
-        from ...transforms.converters import cnxml_to_full_html
+        from ..converters import cnxml_to_full_html
         return cnxml_to_full_html
 
     def call_target(self, *args, **kwargs):
@@ -71,7 +71,7 @@ class Html2CnxmlTests(unittest.TestCase):
 
     @property
     def target(self):
-        from ...transforms.converters import html_to_full_cnxml
+        from ..converters import html_to_full_cnxml
         return html_to_full_cnxml
 
     def call_target(self, *args, **kwargs):

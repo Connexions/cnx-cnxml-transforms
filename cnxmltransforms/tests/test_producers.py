@@ -12,7 +12,7 @@ import unittest
 from lxml import etree
 from psycopg2 import Binary
 
-from .. import testing
+from . import testing
 
 
 # ############### #
@@ -33,7 +33,7 @@ class AbstractToHtmlTestCase(unittest.TestCase):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
-        from ...transforms.producers import produce_html_for_abstract
+        from ..producers import produce_html_for_abstract
         return produce_html_for_abstract(testing.fake_plpy,
                                          *args, **kwargs)
 
@@ -128,7 +128,7 @@ class AbstractToHtmlTestCase(unittest.TestCase):
                        (abstractid,))
         cursor.connection.commit()
 
-        from ...transforms.producers import MissingAbstract
+        from ..producers import MissingAbstract
         with self.assertRaises(MissingAbstract) as caught_exception:
             self.call_target(document_ident)
 
@@ -188,7 +188,7 @@ class ModuleToHtmlTestCase(unittest.TestCase):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
-        from ...transforms.producers import produce_html_for_module
+        from ..producers import produce_html_for_module
         return produce_html_for_module(testing.fake_plpy,
                                        *args, **kwargs)
 
@@ -202,7 +202,7 @@ class ModuleToHtmlTestCase(unittest.TestCase):
                        (ident, filename,))
         cursor.connection.commit()
 
-        from ...transforms.producers import MissingDocumentOrSource
+        from ..producers import MissingDocumentOrSource
         with self.assertRaises(MissingDocumentOrSource) as caught_exc:
             self.call_target(ident, filename)
         exception = caught_exc.exception
@@ -215,7 +215,7 @@ class ModuleToHtmlTestCase(unittest.TestCase):
         #   can't be found.
         ident, filename = 0, 'index.cnxml'
 
-        from ...transforms.producers import MissingDocumentOrSource
+        from ..producers import MissingDocumentOrSource
         with self.assertRaises(MissingDocumentOrSource) as caught_exc:
             self.call_target(ident, filename)
         exception = caught_exc.exception
@@ -310,7 +310,7 @@ class ModuleToHtmlTestCase(unittest.TestCase):
                        "VALUES (2, %s, 'index.cnxml.html')", (fileid,))
         cursor.connection.commit()
 
-        from ...transforms.producers import IndexFileExistsError
+        from ..producers import IndexFileExistsError
 
         with self.assertRaises(IndexFileExistsError) as e:
             self.call_target(2, overwrite_html=False)
@@ -396,7 +396,7 @@ class AbstractToCnxmlTestCase(unittest.TestCase):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
-        from ...transforms.producers import produce_cnxml_for_abstract
+        from ..producers import produce_cnxml_for_abstract
         return produce_cnxml_for_abstract(testing.fake_plpy,
                                           *args, **kwargs)
 
@@ -489,7 +489,7 @@ class AbstractToCnxmlTestCase(unittest.TestCase):
                        (abstractid,))
         cursor.connection.commit()
 
-        from ...transforms.producers import MissingAbstract
+        from ..producers import MissingAbstract
         with self.assertRaises(MissingAbstract) as caught_exception:
             self.call_target(document_ident)
 
@@ -508,7 +508,7 @@ class ModuleToCnxmlTestCase(unittest.TestCase):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
-        from ...transforms.producers import produce_cnxml_for_module
+        from ..producers import produce_cnxml_for_module
         return produce_cnxml_for_module(testing.fake_plpy,
                                         *args, **kwargs)
 
@@ -522,7 +522,7 @@ class ModuleToCnxmlTestCase(unittest.TestCase):
                        (ident, filename,))
         cursor.connection.commit()
 
-        from ...transforms.producers import MissingDocumentOrSource
+        from ..producers import MissingDocumentOrSource
         with self.assertRaises(MissingDocumentOrSource) as caught_exc:
             self.call_target(ident, filename)
         exception = caught_exc.exception
@@ -535,7 +535,7 @@ class ModuleToCnxmlTestCase(unittest.TestCase):
         #   can't be found.
         ident, filename = 0, 'index.cnxml'
 
-        from ...transforms.producers import MissingDocumentOrSource
+        from ..producers import MissingDocumentOrSource
         with self.assertRaises(MissingDocumentOrSource) as caught_exc:
             self.call_target(ident, filename)
         exception = caught_exc.exception
@@ -620,7 +620,7 @@ class ModuleToCnxmlTestCase(unittest.TestCase):
                        "VALUES (2, %s, 'index.html.cnxml')", (fileid,))
         cursor.connection.commit()
 
-        from ...transforms.producers import IndexFileExistsError
+        from ..producers import IndexFileExistsError
 
         with self.assertRaises(IndexFileExistsError) as e:
             self.call_target(2, overwrite=False)
@@ -656,7 +656,7 @@ class ModuleToCnxmlTestCase(unittest.TestCase):
                        "VALUES (2, %s, 'index.html.cnxml')", (fileid,))
         cursor.connection.commit()
 
-        from ...transforms.producers import IndexFileExistsError
+        from ..producers import IndexFileExistsError
 
         with self.assertRaises(IndexFileExistsError) as e:
             self.call_target(2, overwrite=False)
