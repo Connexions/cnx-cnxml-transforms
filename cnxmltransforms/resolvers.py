@@ -10,10 +10,10 @@
 import re
 import inspect
 import json
+import uuid
 
 from lxml import etree
 
-from ..utils import split_ident_hash, join_ident_hash
 
 __all__ = (
     'MODULE_REFERENCE', 'RESOURCE_REFERENCE',
@@ -110,6 +110,72 @@ SQL_FILENAME_BY_SHA1_N_IDENT_STATMENT = ("""\
 SELECT mf.filename FROM module_files AS mf NATURAL JOIN files AS f
 WHERE f.sha1 = $1 AND module_ident = $2
 """, ('text', 'integer'))
+
+
+# copied from cnxarchive.utils
+def join_ident_hash(id, version):
+    """Returns a valid ident_hash from the given ``id`` and ``version``
+    where ``id`` can be a string or UUID instance and ``version`` can be a
+    string or tuple of major and minor version.
+    """
+    if isinstance(id, uuid.UUID):
+        id = str(id)
+    join_args = [id]
+    if isinstance(version, (tuple, list,)):
+        assert len(version) == 2, "version sequence must be two values."
+        version = '.'.join([str(x) for x in version if x is not None])
+    if version:
+        join_args.append(version)
+    return '@'.join(join_args)
+
+
+# copied from cnxarchive.utils
+def split_ident_hash(ident_hash, split_version=False):
+    """Returns a valid id and version from the <id>@<version> hash syntax."""
+    if '@' not in ident_hash:
+        ident_hash = '{}@'.format(ident_hash)
+    split_value = ident_hash.split('@')
+    if split_value[0] == '':
+        raise ValueError("Missing values")
+
+    try:
+        id, version = split_value
+    except ValueError:
+        raise
+
+    # Validate the id.
+    try:
+        uuid.UUID(id)
+    except ValueError:
+        raise
+    # None'ify the version on empty string.
+    version = version and version or None
+
+    if split_version:
+        if version is None:
+            version = (None, None,)
+        else:
+            split_version = version.split('.')
+            if len(split_version) == 1:
+                split_version.append(None)
+            version = tuple(split_version)
+    return id, version
+
+
+# copied from cnxepub.models
+def flatten_tree_to_ident_hashes(item_or_tree, lucent_id='subcol'):
+    """Flatten a tree to id and version values (ident_hash)."""
+    if 'contents' in item_or_tree:
+        tree = item_or_tree
+        if tree['id'] != lucent_id:
+            yield tree['id']
+        for i in tree['contents']:
+            for x in flatten_tree_to_ident_hashes(i, lucent_id):
+                yield x
+    else:
+        item = item_or_tree
+        yield item['id']
+    raise StopIteration()
 
 
 class BaseReferenceException(Exception):
@@ -346,8 +412,6 @@ class CnxmlToHtmlReferenceResolver(BaseReferenceResolver):
         which may or may not include the book uuid depending on whether
         the page is within the book.
         """
-        from cnxepub import flatten_tree_to_ident_hashes  # XXX
-        from ..utils import join_ident_hash  # XXX
         plan = self.plpy.prepare(
             'SELECT tree_to_json($1, $2)::json', ('uuid', 'text'))
         tree = self.plpy.execute(
