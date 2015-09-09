@@ -20,12 +20,12 @@ __all__ = (
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-CNXARCHIVE_DIR = os.path.abspath(os.path.join(here, '..'))
+ROOT_DIR = os.path.abspath(os.path.join(here, '.'))
 RHAPTOS_CNXMLUTILS_DIR = os.path.dirname(rhaptos.cnxmlutils.__file__)
 
 XSL_DIRECTORY = os.path.abspath(os.path.join(RHAPTOS_CNXMLUTILS_DIR, 'xsl'))
 MATHML_XSL_PATH = os.path.abspath(os.path.join(
-    CNXARCHIVE_DIR, 'xsl', 'content2presentation.xsl'))
+    ROOT_DIR, 'xsl', 'content2presentation.xsl'))
 
 
 _gen_xsl = lambda f, d=XSL_DIRECTORY: etree.XSLT(etree.parse(os.path.join(d, f)))
