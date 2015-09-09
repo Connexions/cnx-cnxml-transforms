@@ -11,7 +11,7 @@ import unittest
 
 from lxml import etree
 
-from .. import testing
+from . import testing
 
 
 class HtmlReferenceResolutionTestCase(unittest.TestCase):
@@ -20,16 +20,13 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.fixture.setUp()
-        from ... import _set_settings
-        settings = testing.integration_test_settings()
-        _set_settings(settings)
 
     def tearDown(self):
         self.fixture.tearDown()
 
     @property
     def target(self):
-        from ...transforms.resolvers import resolve_cnxml_urls
+        from ..resolvers import resolve_cnxml_urls
         return resolve_cnxml_urls
 
     @testing.db_connect
@@ -37,7 +34,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
         # Case to test that a document's internal references have
         #   been rewritten to the cnx-archive's read-only API routes.
         ident = 3
-        from ...transforms.converters import cnxml_to_full_html
+        from ..converters import cnxml_to_full_html
         content_filepath = os.path.join(testing.DATA_DIRECTORY,
                                         'm42119-1.3-modified.cnxml')
         with open(content_filepath, 'r') as fb:
@@ -56,7 +53,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
     @testing.db_connect
     def test_reference_not_parseable(self, cursor):
         ident = 3
-        from ...transforms.converters import cnxml_to_full_html
+        from ..converters import cnxml_to_full_html
         import glob
         content_filepath = os.path.join(testing.DATA_DIRECTORY,
                                         'm45070.cnxml')
@@ -160,7 +157,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
 
     @testing.db_connect
     def test_get_resource_info(self, cursor):
-        from ...transforms.resolvers import (
+        from ..resolvers import (
             CnxmlToHtmlReferenceResolver as ReferenceResolver,
             ReferenceNotFound,
             )
@@ -196,7 +193,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
             {'hash': '075500ad9f71890a85fe3f7a4137ac08e2b7907c', 'id': 23})
 
     def test_parse_reference(self):
-        from ...transforms.resolvers import (
+        from ..resolvers import (
             MODULE_REFERENCE, RESOURCE_REFERENCE,
             parse_legacy_reference as parse_reference,
             )
@@ -278,25 +275,22 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.fixture.setUp()
-        from ... import _set_settings
-        settings = testing.integration_test_settings()
-        _set_settings(settings)
 
     def tearDown(self):
         self.fixture.tearDown()
 
     @property
     def target(self):
-        from ...transforms.resolvers import resolve_html_urls
+        from ..resolvers import resolve_html_urls
         return resolve_html_urls
 
     @property
     def target_cls(self):
-        from ...transforms.resolvers import HtmlToCnxmlReferenceResolver
+        from ..resolvers import HtmlToCnxmlReferenceResolver
         return HtmlToCnxmlReferenceResolver
 
     def test_parse_reference(self):
-        from ...transforms.resolvers import (
+        from ..resolvers import (
             DOCUMENT_REFERENCE, BINDER_REFERENCE,
             RESOURCE_REFERENCE,
             parse_html_reference as parse_reference,
@@ -384,7 +378,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
         # Case to test that a document's internal references have
         #   been rewritten to legacy's read-only API routes.
         ident = 3
-        from ...transforms.converters import html_to_full_cnxml
+        from ..converters import html_to_full_cnxml
         content_filepath = os.path.join(testing.DATA_DIRECTORY,
                                         'm99999-1.1.html')
         with open(content_filepath, 'r') as fb:
@@ -454,7 +448,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
 
     @testing.db_connect
     def test_fix_module_id_fails(self, cursor):
-        from ...transforms.resolvers import ReferenceNotFound
+        from ..resolvers import ReferenceNotFound
 
         content = """\
 <document xmlns="http://cnx.rice.edu/cnxml">
@@ -477,7 +471,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
     @testing.db_connect
     def test_reference_not_parsable(self, cursor):
         ident = 3
-        from ...transforms.converters import html_to_full_cnxml
+        from ..converters import html_to_full_cnxml
         content_filepath = os.path.join(testing.DATA_DIRECTORY,
                                         'm99999-1.1.html')
         with open(content_filepath, 'r') as fb:
@@ -496,7 +490,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
     @testing.db_connect
     def test_get_resource_filename(self, cursor):
         # XXX
-        from ...transforms.resolvers import (
+        from ..resolvers import (
             HtmlToCnxmlReferenceResolver as ReferenceResolver,
             ReferenceNotFound,
             )
