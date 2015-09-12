@@ -8,6 +8,7 @@ install_requires = (
     )
 tests_require = (
     'cnx-archive',
+    'psycopg2',
     )
 description = "Transforms cnxml to html and vice versa."
 

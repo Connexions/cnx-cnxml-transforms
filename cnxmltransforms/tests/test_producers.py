@@ -28,13 +28,12 @@ class AbstractToHtmlTestCase(unittest.TestCase):
     def tearDown(self):
         self.fixture.tearDown()
 
-    @testing.db_connect
-    def call_target(self, cursor, *args, **kwargs):
+    def call_target(self, *args, **kwargs):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
         from ..producers import produce_html_for_abstract
-        return produce_html_for_abstract(cursor.connection, cursor,
+        return produce_html_for_abstract(testing.FauxPlpy,
                                          *args, **kwargs)
 
     @testing.db_connect
@@ -183,13 +182,12 @@ class ModuleToHtmlTestCase(unittest.TestCase):
     def tearDown(self):
         self.fixture.tearDown()
 
-    @testing.db_connect
-    def call_target(self, cursor, *args, **kwargs):
+    def call_target(self, *args, **kwargs):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
         from ..producers import produce_html_for_module
-        return produce_html_for_module(cursor.connection, cursor,
+        return produce_html_for_module(testing.FauxPlpy,
                                        *args, **kwargs)
 
     @testing.db_connect
@@ -387,13 +385,12 @@ class AbstractToCnxmlTestCase(unittest.TestCase):
     def tearDown(self):
         self.fixture.tearDown()
 
-    @testing.db_connect
-    def call_target(self, cursor, *args, **kwargs):
+    def call_target(self, *args, **kwargs):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
         from ..producers import produce_cnxml_for_abstract
-        return produce_cnxml_for_abstract(cursor.connection, cursor,
+        return produce_cnxml_for_abstract(testing.FauxPlpy,
                                           *args, **kwargs)
 
     @testing.db_connect
@@ -499,13 +496,12 @@ class ModuleToCnxmlTestCase(unittest.TestCase):
     def tearDown(self):
         self.fixture.tearDown()
 
-    @testing.db_connect
-    def call_target(self, cursor, *args, **kwargs):
+    def call_target(self, *args, **kwargs):
         """Call the target function. This wrapping takes care of the
         connection parameters.
         """
         from ..producers import produce_cnxml_for_module
-        return produce_cnxml_for_module(cursor.connection, cursor,
+        return produce_cnxml_for_module(testing.FauxPlpy,
                                         *args, **kwargs)
 
     @testing.db_connect

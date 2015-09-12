@@ -40,7 +40,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
         with open(content_filepath, 'r') as fb:
             content = cnxml_to_full_html(fb.read())
             content = io.BytesIO(content)
-            content, bad_refs = self.target(content, cursor.connection, ident)
+            content, bad_refs = self.target(content, testing.FauxPlpy, ident)
 
         # Read the content for the reference changes.
         expected_img_ref = '<img src="/resources/d47864c2ac77d80b1f2ff4c4c7f1b2059669e3e9/Figure_01_00_01.jpg" data-media-type="image/jpg" alt="The spiral galaxy Andromeda is shown."/>'
@@ -60,7 +60,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
         with open(content_filepath, 'r') as fb:
             content = cnxml_to_full_html(fb.read())
         content = io.BytesIO(content)
-        content, bad_refs = self.target(content, cursor.connection, ident)
+        content, bad_refs = self.target(content, testing.FauxPlpy, ident)
 
         self.assertEqual(sorted(bad_refs), [
             "Invalid reference value: document=3, reference=/m",
@@ -110,7 +110,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
 </html>''')
 
         html, bad_references = self.target(html,
-                                           db_connection=cursor.connection,
+                                           plpy=testing.FauxPlpy,
                                            document_ident=3)
         cursor.connection.commit()
 
@@ -163,7 +163,7 @@ class HtmlReferenceResolutionTestCase(unittest.TestCase):
             )
 
         resolver = ReferenceResolver(io.BytesIO('<html></html>'),
-                                     cursor.connection, 3)
+                                     testing.FauxPlpy, 3)
 
         # Test file not found
         self.assertRaises(ReferenceNotFound, resolver.get_resource_info,
@@ -384,7 +384,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
         with open(content_filepath, 'r') as fb:
             content = html_to_full_cnxml(fb.read())
             content = io.BytesIO(content)
-            content, bad_refs = self.target(content, cursor.connection, ident)
+            content, bad_refs = self.target(content, testing.FauxPlpy, ident)
 
         cnxml_etree = etree.parse(io.BytesIO(content))
         nsmap = cnxml_etree.getroot().nsmap.copy()
@@ -456,14 +456,14 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
 </document>"""
         # Note, no ident was given.
         resolver = self.target_cls(io.BytesIO(content),
-                                   cursor.connection, None)
+                                   testing.FauxPlpy, None)
         problems = resolver.fix_module_id()
         self.assertEqual(len(problems), 1)
         self.assertEqual(type(problems[0]), ReferenceNotFound)
 
         # Note, an invalid ident was given.
         resolver = self.target_cls(io.BytesIO(content),
-                                   cursor.connection, 789321)
+                                   testing.FauxPlpy, 789321)
         problems = resolver.fix_module_id()
         self.assertEqual(len(problems), 1)
         self.assertEqual(type(problems[0]), ReferenceNotFound)
@@ -477,7 +477,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
         with open(content_filepath, 'r') as fb:
             content = html_to_full_cnxml(fb.read())
         content = io.BytesIO(content)
-        content, bad_refs = self.target(content, cursor.connection, ident)
+        content, bad_refs = self.target(content, testing.FauxPlpy, ident)
 
         self.assertEqual(sorted(bad_refs), [
             "Invalid reference value: document=3, reference=/contents/42ae45b/hello-world",
@@ -496,7 +496,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
             )
 
         resolver = ReferenceResolver(io.BytesIO('<html></html>'),
-                                     cursor.connection, 3)
+                                     testing.FauxPlpy, 3)
 
         # Test file not found
         self.assertRaises(ReferenceNotFound, resolver.get_resource_filename,
