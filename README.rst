@@ -1,6 +1,12 @@
 Cnxml transforms
 ================
 
+.. image:: https://travis-ci.org/Connexions/cnx-cnxml-transforms.svg?branch=master
+   :target: https://travis-ci.org/Connexions/cnx-cnxml-transforms
+
+.. image:: https://coveralls.io/repos/github/Connexions/cnx-cnxml-transforms/badge.svg?branch=master
+   :target: https://coveralls.io/github/Connexions/cnx-cnxml-transforms?branch=master
+
 This package is used for transforming documents in `Connexions archive
 <https://github.com/Connexions/cnx-archive>`_ between cnxml and html formats.
 
