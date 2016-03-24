@@ -1,0 +1,58 @@
+language: python
+python:
+  - "2.7"
+addons:
+  postgresql: "9.4"
+services:
+  - memcached
+before_install:
+  - pip install pep8
+  - pep8 --exclude=tests *.py cnxmltransforms/
+  - pep8 --max-line-length=200 cnxmltransforms/tests
+
+  - sudo apt-get update
+  # Remove python-zope.interface, not compatible with the pyramid version we're
+  # using
+  - sudo apt-get remove python-zope.interface
+  # Install the 'plpython' extension language
+  - sudo apt-get install postgresql-plpython-9.4
+  # Install the 'plxslt' extension language
+  - sudo apt-get install libxml2-dev libxslt-dev postgresql-server-dev-9.4
+  - git clone https://github.com/petere/plxslt.git
+  - cd plxslt && sudo make && sudo make install && cd ..
+  # Install cnx-query-grammar
+  - git clone https://github.com/Connexions/cnx-query-grammar.git
+  - cd cnx-query-grammar && python setup.py install && cd ..
+  # Install cnx-epub
+  - git clone https://github.com/Connexions/cnx-epub.git
+  - cd cnx-epub && python setup.py install && cd ..
+  # Install rhaptos.cnxmlutils
+  - git clone https://github.com/Connexions/rhaptos.cnxmlutils.git
+  - cd rhaptos.cnxmlutils && python setup.py install && cd ..
+  # Install cnx-archive
+  - git clone https://github.com/Connexions/cnx-archive.git
+  - cd cnx-archive && python setup.py install && cd ..
+
+  # Scripts get installed to /usr/local/bin
+  - pip install coverage
+  - pip install coveralls
+install:
+  - python setup.py install
+before_script:
+  # Set up postgres roles
+  - sudo -u postgres psql -d postgres -c "CREATE USER cnxarchive WITH SUPERUSER PASSWORD 'cnxarchive';"
+  # Set up the database
+  - sudo -u postgres createdb -O cnxarchive cnxarchive-testing
+  - git clone https://github.com/okbob/session_exec
+  - cd session_exec
+  - make USE_PGXS=1 -e && sudo make USE_PGXS=1 -e install
+  - cd ..
+
+script:
+  # This is the same as `python -m unittest discover` with a coverage wrapper.
+  - coverage run --source=cnxmltransforms setup.py test
+after_success:
+  # Report test coverage to coveralls.io
+  - coveralls
+notifications:
+  email: false
