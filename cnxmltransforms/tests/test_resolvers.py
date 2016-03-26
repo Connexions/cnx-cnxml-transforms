@@ -8,11 +8,47 @@
 import os
 import io
 import unittest
+import uuid
 
 from lxml import etree
 from pyramid import testing as pyramid_testing
 
 from . import testing
+
+
+class JoinIdentHashTestCase(unittest.TestCase):
+    @property
+    def target(self):
+        from ..resolvers import join_ident_hash
+        return join_ident_hash
+
+    def test_uuid(self):
+        uuid_ = uuid.uuid4()
+        self.assertEqual('{}@1'.format(uuid_), self.target(uuid_, '1'))
+
+    def test_version_tuple(self):
+        id_ = str(uuid.uuid4())
+        version = (7, 3)
+        self.assertEqual('{}@7.3'.format(id_),
+                         self.target(id_, version))
+
+    def test_version_str(self):
+        id_ = str(uuid.uuid4())
+        version = '3.14'
+        self.assertEqual('{}@3.14'.format(id_),
+                         self.target(id_, version))
+
+    def test_invalid_version(self):
+        id_ = str(uuid.uuid4())
+        version = (0, 1, 2)
+        with self.assertRaises(AssertionError) as cm:
+            self.target(id_, version)
+        self.assertEqual('version sequence must be two values.',
+                         str(cm.exception))
+
+    def test_no_version(self):
+        id_ = str(uuid.uuid4())
+        self.assertEqual(id_, self.target(id_, None))
 
 
 class HtmlReferenceResolutionTestCase(unittest.TestCase):
