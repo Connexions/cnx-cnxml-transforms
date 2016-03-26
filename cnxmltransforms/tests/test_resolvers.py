@@ -51,6 +51,52 @@ class JoinIdentHashTestCase(unittest.TestCase):
         self.assertEqual(id_, self.target(id_, None))
 
 
+class SplitIdentHashTestCase(unittest.TestCase):
+    @property
+    def target(self):
+        from ..resolvers import split_ident_hash
+        return split_ident_hash
+
+    def test_uuid_only(self):
+        uuid_ = str(uuid.uuid4())
+        self.assertEqual((uuid_, None), self.target(uuid_))
+
+    def test_uuid_missing(self):
+        with self.assertRaises(ValueError) as cm:
+            self.target('@1')
+        self.assertEqual('Missing values', str(cm.exception))
+
+    def test_two_at_signs(self):
+        id_ = str(uuid.uuid4())
+        with self.assertRaises(ValueError) as cm:
+            self.target('{}@1@2'.format(id_))
+
+    def test_not_uuid(self):
+        id_ = 'abcd'
+        with self.assertRaises(ValueError) as cm:
+            self.target('{}@1'.format(id_))
+
+    def test_uuid_version(self):
+        id_ = str(uuid.uuid4())
+        self.assertEqual((id_, '2.14'), self.target('{}@2.14'.format(id_)))
+
+    def test_split_version_major_version(self):
+        id_ = str(uuid.uuid4())
+        self.assertEqual((id_, ('2', None)),
+                         self.target('{}@2'.format(id_), split_version=True))
+
+    def test_split_version_minor_version(self):
+        id_ = str(uuid.uuid4())
+        self.assertEqual(
+            (id_, ('2', '14')),
+            self.target('{}@2.14'.format(id_), split_version=True))
+
+    def test_split_version_no_version(self):
+        id_ = str(uuid.uuid4())
+        self.assertEqual((id_, (None, None)),
+                         self.target(id_, split_version=True))
+
+
 class HtmlReferenceResolutionTestCase(unittest.TestCase):
     fixture = testing.data_fixture
     maxDiff = None
