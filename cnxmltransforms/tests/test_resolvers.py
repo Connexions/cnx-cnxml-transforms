@@ -539,6 +539,12 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
                 '//*[@id="java-applet"]/c:java-applet',
                 namespaces=nsmap)[0]))
 
+        # Check page in book link.
+        expected_ref = """\
+<link url="http://legacy.cnx.org/content/m41237/1.1/\
+?collection=col11406/1.7">here</link>"""
+        self.assertIn(expected_ref, content)
+
         # Check bad reference was not transformed.
         expected_ref = '<link>indkoeb.jpg</link>'
         self.assertIn(expected_ref, content)

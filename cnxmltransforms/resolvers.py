@@ -645,20 +645,20 @@ class HtmlToCnxmlReferenceResolver(BaseReferenceResolver):
                         link.attrib['version'] = version
             elif ref_type == BINDER_REFERENCE:
                 id, version, bound_document, url_frag = payload
-                mid, version = self.get_mid_n_version(id, version)
-                if mid is None:
-                    id, version, id_type = split_ident_hash(bound_document)
+                bound_ident_hash = split_ident_hash(bound_document)
+                mid, mversion = self.get_mid_n_version(*bound_ident_hash)
+                if mid is not None:
                     cid, cversion = self.get_mid_n_version(id, version)
                     if cid is None:
                         # Binder ref doesn't exist, but Document does.
                         # Assign the document specific attributes.
                         link.attrib['document'] = mid
                         if version is not None:
-                            link.attrib['version'] = version
+                            link.attrib['version'] = mversion
                     else:
                         # Process the ref as an external url.
                         url = "http://legacy.cnx.org/content/" \
-                              "{}/{}/?collection={}".format(mid, version, cid)
+                              "{}/{}/?collection={}".format(mid, mversion, cid)
                         if cversion is not None:
                             url = "{}/{}".format(url, cversion)
                         link.attrib['url'] = url
