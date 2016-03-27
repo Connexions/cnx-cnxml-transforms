@@ -579,6 +579,7 @@ class CnxmlReferenceResolutionTestCase(unittest.TestCase):
         self.assertEqual(sorted(bad_refs), [
             "Invalid reference value: document=3, reference=/contents/42ae45b/hello-world",
             "Missing resource with hash: 0f3da0de61849a47f77543c383d1ac621b25e6e0: document=3, reference=None",
+            "Missing resource with hash: 0f3da0de61849a47f77543c383d1ac621b25e6e0: document=3, reference=None",
             "Unable to find a reference to 'c44477a6-1278-433a-ba1e-5a21c8bab191' at version 'None'.: document=3, reference=/contents/c44477a6-1278-433a-ba1e-5a21c8bab191@12",
             ])
         # invalid ref still in the content?
