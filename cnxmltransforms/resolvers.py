@@ -413,13 +413,15 @@ class CnxmlToHtmlReferenceResolver(BaseReferenceResolver):
         the page is within the book.
         """
         plan = self.plpy.prepare(
-            'SELECT tree_to_json($1, $2, FALSE)::json', ('uuid', 'text'))
+            'SELECT tree_to_json($1, $2, FALSE)::json', ('text', 'text'))
         tree = self.plpy.execute(
             plan, (book_uuid, book_version))[0]['tree_to_json']
+        if isinstance(tree, basestring):
+            tree = json.loads(tree)
         pages = list(flatten_tree_to_ident_hashes(tree))
         book_ident_hash = join_ident_hash(book_uuid, book_version)
         page_ident_hash = join_ident_hash(page_uuid, page_version)
-        for p_ident_hash in flatten_tree_to_ident_hashes(tree):
+        for p_ident_hash in pages:
             p_id, p_version = split_ident_hash(p_ident_hash)
             if (p_id == page_uuid and
                     (page_version is None or
