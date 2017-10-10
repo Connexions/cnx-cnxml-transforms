@@ -26,3 +26,10 @@ so first complete the steps required for running the cnx-archive tests.
 To run the tests::
 
     python setup.py test
+
+License
+-------
+
+This software is subject to the provisions of the GNU Affero General
+Public License Version 3.0 (AGPL). See license.txt for details.
+Copyright (c) 2017 Rice University
